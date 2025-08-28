@@ -28,6 +28,8 @@ def go(config: DictConfig):
     os.environ["WANDB_PROJECT"] = config["main"]["project_name"]
     os.environ["WANDB_RUN_GROUP"] = config["main"]["experiment_name"]
 
+    root_path = hydra.utils.get_original_cwd()
+
     # Steps to execute
     steps_par = config['main']['steps']
     active_steps = steps_par.split(",") if steps_par != "all" else _steps
@@ -54,12 +56,38 @@ def go(config: DictConfig):
             ##################
             # Implement here #
             ##################
+            
+
+            _ = mflow.run(
+                os.path.join(root_path, "basic_cleaning"),
+                "main",
+                parameters={
+                    "input_artifact": "sample.csv:latest",
+                    "output_artifact": "clean_sample.csv",
+                    "output_type": "clean_data",
+                    "output_description": "Basic cleaning applied to dataset",
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"]
+                    },
+            )    
             pass
 
         if "data_check" in active_steps:
             ##################
             # Implement here #
             ##################
+            _ = mlflow.run(
+                os.path.join(root_path, "data_check"),
+                "main",
+                parameters={
+                    "csv": "clean_sample.csv:latest",
+                    "ref": "clean_sample.csv:reference",
+                    "kl_threshold": config["data_check"]["kl_threshold"],
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"]
+                },
+            )
+            
             pass
 
         if "data_split" in active_steps:
