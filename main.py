@@ -58,8 +58,8 @@ def go(config: DictConfig):
             ##################
             
 
-            _ = mflow.run(
-                os.path.join(root_path, "basic_cleaning"),
+            _ = mlflow.run(
+                os.path.join(root_path, "src/basic_cleaning"),
                 "main",
                 parameters={
                     "input_artifact": "sample.csv:latest",
@@ -70,14 +70,17 @@ def go(config: DictConfig):
                     "max_price": config["etl"]["max_price"]
                     },
             )    
+            
             pass
 
         if "data_check" in active_steps:
             ##################
             # Implement here #
             ##################
+            run = wandb.init(project="nyc_airbnb", job_type="data_check", group="validation",save_code=True, reinit=True)
+            
             _ = mlflow.run(
-                os.path.join(root_path, "data_check"),
+                os.path.join(root_path, "src/data_check"),
                 "main",
                 parameters={
                     "csv": "clean_sample.csv:latest",
@@ -87,7 +90,8 @@ def go(config: DictConfig):
                     "max_price": config["etl"]["max_price"]
                 },
             )
-            
+
+            wandb.finish()
             pass
 
         if "data_split" in active_steps:
