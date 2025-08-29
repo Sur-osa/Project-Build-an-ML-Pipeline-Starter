@@ -40,7 +40,7 @@ logger = logging.getLogger()
 
 def go(args):
 
-    run = wandb.init(job_type="train_random_forest")
+    run = wandb.init(project="nyc_airbnb", job_type="train_random_forest", group="training", save_code=True, reinit=True)
     run.config.update(args)
 
     # Get the Random Forest configuration and update W&B
@@ -73,7 +73,7 @@ def go(args):
 
     ######################################
     # Fit the pipeline sk_pipe by calling the .fit method on X_train and y_train
-    # YOUR CODE HERE
+    sk_pipe.fit(X_train, y_train)
     ######################################
 
     # Compute r2 and MAE
@@ -97,6 +97,8 @@ def go(args):
     # HINT: use mlflow.sklearn.save_model
     mlflow.sklearn.save_model(
         # YOUR CODE HERE
+        sk_pipe,
+        path="random_forest_dir"
         input_example = X_train.iloc[:5]
     )
     ######################################
@@ -120,6 +122,7 @@ def go(args):
     run.summary['r2'] = r_squared
     # Now save the variable mae under the key "mae".
     # YOUR CODE HERE
+    run.summary['mae'] = mae
     ######################################
 
     # Upload to W&B the feture importance visualization
@@ -163,6 +166,8 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     # 2 - A OneHotEncoder() step to encode the variable
     non_ordinal_categorical_preproc = make_pipeline(
         # YOUR CODE HERE
+        SimpleImputer(strategy="most_frequent"),
+        OneHotEncoder()
     )
     ######################################
 
@@ -226,6 +231,8 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     sk_pipe = Pipeline(
         steps =[
         # YOUR CODE HERE
+        ("preprocess", preprocessor),
+        ("random_forest", random_forest)
         ]
     )
 
