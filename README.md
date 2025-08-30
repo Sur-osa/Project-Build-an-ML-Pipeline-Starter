@@ -6,6 +6,12 @@ to be retrained with the same cadence, necessitating an end-to-end pipeline that
 
 In this project you will build such a pipeline.
 
+GitHub
+https://github.com/Sur-osa/Project-Build-an-ML-Pipeline-Starter.git
+
+W&B
+https://wandb.ai/surosa-western-governors-university/nyc_airbnb
+
 ## Table of contents
 
 - [Preliminary steps](#preliminary-steps)
