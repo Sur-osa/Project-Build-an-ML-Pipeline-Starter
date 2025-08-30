@@ -28,8 +28,7 @@ def go(args):
     df = df[idx].copy()
     # Convert last_review to datetime
     df['last_review'] = pd.to_datetime(df['last_review'])
-
-
+    
     
     # Save the cleaned file
     df.to_csv('clean_sample.csv',index=False)
